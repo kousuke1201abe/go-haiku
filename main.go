@@ -49,7 +49,7 @@ func main() {
 				if ev.User != botname {
 					words := haiku.NewWords(ev.Text)
 					if words.CheckHaiku() == true {
-						api.PostMessage(ev.Channel, slack.MsgOptionText("5 7 5", false))
+						api.PostMessage(ev.Channel, slack.MsgOptionText(":575:", false))
 					}
 				}
 			}
