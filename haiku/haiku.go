@@ -15,7 +15,7 @@ type Words []Word
 
 func NewWords(text string) Words {
 	args := make(map[string]string)
-	args = map[string]string{"dicdir": "/usr/local/lib/mecab/dic/mecab-ipadic-neologd"}
+	args = map[string]string{"dicdir": "/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd"}
 	mecab, err := mecab.New(args)
 	if err != nil {
 		panic(err)
