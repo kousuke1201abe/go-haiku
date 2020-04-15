@@ -14,6 +14,8 @@ type Word struct {
 type Words []Word
 
 func NewWords(text string) Words {
+	var words Words
+
 	args := make(map[string]string)
 	args = map[string]string{"dicdir": "/usr/lib/x86_64-linux-gnu/mecab/dic/mecab-ipadic-neologd"}
 	mecab, err := mecab.New(args)
@@ -24,15 +26,13 @@ func NewWords(text string) Words {
 
 	node, err := mecab.ParseToNode(text)
 
-	var words Words
 	for ; !node.IsZero(); node = node.Next() {
 		feature_arr := strings.Split(node.Feature(), ",")
 		yomi := feature_arr[len(feature_arr)-1]
 		replacer := strings.NewReplacer("ゃ", "", "ゅ", "", "ょ", "", "ぁ", "", "ぃ", "", "ぅ", "", "ぇ", "", "ぉ", "", "ゎ", "", "ャ", "", "ュ", "", "ョ", "", "ァ", "", "ィ", "", "ゥ", "", "ェ", "", "ォ", "", "ヮ", "")
 		if feature_arr[0] != "記号" && feature_arr[len(feature_arr)-1] != "*" {
-			feature_arr[len(feature_arr)-1] = replacer.Replace(yomi)
 			var word Word
-			word.count = len([]rune(yomi))
+			word.count = len([]rune(replacer.Replace(yomi)))
 			word.pos = feature_arr[0]
 			words = append(words, word)
 		}
@@ -42,7 +42,7 @@ func NewWords(text string) Words {
 }
 
 func (words Words) CheckHaiku() bool {
-	result := false
+	var result bool
 	var endIndex int
 
 	if words.count() == 17 {
@@ -59,7 +59,7 @@ func (words Words) CheckHaiku() bool {
 }
 
 func (words Words) count() int {
-	count := 0
+	var count int
 
 	for _, word := range words {
 		count += word.count
@@ -69,11 +69,12 @@ func (words Words) count() int {
 }
 
 func (words Words) checkKu(startIndex int, expectedCount int) (bool, int) {
-	count := 0
-	endIndex := 0
-	result := false
+	var count, endIndex int
+	var result bool
 
-	if words[startIndex].pos != "名詞" && words[startIndex].pos != "形容詞" && words[startIndex].pos != "形容動詞" && words[startIndex].pos != "副詞" && words[startIndex].pos != "連体詞" && words[startIndex].pos != "感動詞" || words[startIndex].pos == "接頭詞" {
+	pos := words[startIndex].pos
+
+	if pos != "動詞" && pos != "名詞" && pos != "形容詞" && pos != "形容動詞" && pos != "副詞" && pos != "連体詞" && pos != "感動詞" || pos == "接頭詞" {
 		return result, startIndex
 	}
 
